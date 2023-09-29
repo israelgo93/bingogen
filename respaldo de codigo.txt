@@ -1,0 +1,75 @@
+from flask import Flask, render_template, request, send_from_directory, send_file
+from flask_wtf import FlaskForm
+from wtforms import StringField, IntegerField, SubmitField, validators
+import pdfkit
+import os
+import random
+
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'mysecretkey'
+
+tablas_generadas = set()
+
+# Funciones
+def generar_tabla():
+    b = random.sample(range(1, 16), 5)
+    i = random.sample(range(16, 31), 5)
+    n = random.sample(range(31, 46), 5)
+    g = random.sample(range(46, 61), 5)
+    o = random.sample(range(61, 76), 5)
+    n[2] = 'X'
+    tabla = [b, i, n, g, o]
+    return tabla
+
+def generar_serie():
+    series = []
+    for _ in range(6):
+        tabla = generar_tabla()
+        tabla_str = str(tabla)
+        while tabla_str in tablas_generadas:
+            tabla = generar_tabla()
+            tabla_str = str(tabla)
+        tablas_generadas.add(tabla_str)
+        series.append(tabla)
+    return series
+
+def generar_series(n):
+    return [generar_serie() for _ in range(n)]
+
+# Formulario
+class ConfiguracionForm(FlaskForm):
+    titulo = StringField('Título', [validators.DataRequired()])
+    subtitulo = StringField('Subtítulo', [validators.DataRequired()])
+    organizador = StringField('Organizado por', [validators.DataRequired()])
+    direccion = StringField('Dirección', [validators.DataRequired()])
+    fecha_hora = StringField('Fecha y Hora', [validators.DataRequired()])
+    valor = StringField('Valor $', [validators.DataRequired()])
+    cantidad_series = IntegerField('Número de Series a generar', [validators.NumberRange(min=1, max=1000)])
+    submit = SubmitField('Generar Series')
+
+# Rutas
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    form = ConfiguracionForm()
+    series = []
+    if form.validate_on_submit():
+        print("Formulario validado correctamente.")  # Debug
+        series = generar_series(form.cantidad_series.data)
+        with open("bingo.html", "w") as f:
+            f.write(render_template('bingo.html', series=series, form=form))
+        print("Archivo HTML creado.")  # Debug
+
+        # Configuración de pdfkit
+        path_wkthmltopdf = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'  # Reemplaza con la ruta exacta al ejecutable wkhtmltopdf
+        config = pdfkit.configuration(wkhtmltopdf=path_wkthmltopdf)
+        pdfkit.from_file("bingo.html", "bingo.pdf", configuration=config)
+        
+        print("Archivo PDF creado.")  # Debug
+        os.remove("bingo.html")
+        return send_file(os.path.join(os.getcwd(), "bingo.pdf"), as_attachment=True)
+    else:
+        print("El formulario no se validó.")  # Debug
+    return render_template('index.html', form=form, series=series)
+
+if __name__ == "__main__":
+    app.run(debug=True)

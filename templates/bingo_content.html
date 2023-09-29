@@ -1,0 +1,53 @@
+<!-- Encabezado con información personalizada -->
+{% for serie in series %}
+<header>
+    <div class="info-container">
+        <h3>{{ form.titulo.data }}</h3>
+        <h4>{{ form.subtitulo.data }}</h4>
+        <p>Organizado por: {{ form.organizador.data }}</p>
+        <p>Dirección: {{ form.direccion.data }}</p>
+        <p>Fecha y hora: {{ form.fecha_hora.data }}</p>
+    </div>
+    <div class="valor-container">
+        Valor: ${{ form.valor.data }}
+    </div>
+</header>
+
+<!-- Series de Bingo -->
+<div class="serie-container">
+    {% for i in range(0, 8, 2) %}
+    <div class="row">
+        {% for j in range(2) %}
+        <div class="col-md-6">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <td>B</td>
+                        <td>I</td>
+                        <td>N</td>
+                        <td>G</td>
+                        <td>O</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for fila in serie[i+j] %}
+                    <tr>
+                        {% for numero in fila %}
+                        <td>
+                            {% if numero == 'X' %}
+                            {{ form.organizador.data }}
+                            {% else %}
+                            {{ numero }}
+                            {% endif %}
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+</div>
+{% endfor %}

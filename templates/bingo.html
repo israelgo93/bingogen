@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-size: 8px;
+            width: 190mm; /* Aproximadamente teniendo en cuenta márgenes */
+            margin: 10mm; /* Márgenes aproximados */
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            border-bottom: 1px solid black;
+        }
+
+        .info-container {
+            border: 2px solid black;
+            padding: 5px;
+            flex: 3;
+        }
+
+        .valor-container {
+            border: 2px solid black;
+            padding: 5px;
+            text-align: right;
+            flex: 1;
+        }
+
+        .serie-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* 3 columnas iguales */
+            gap: 5px; /* Espacio entre tablas */
+        }
+
+        table {
+            table-layout: fixed;
+            border-collapse: collapse;
+        }
+
+        td {
+            border: 1px solid black;
+            text-align: center;
+            height: 18px;
+            width: 20%;
+        }
+    </style>
+    <title>{{ form.titulo.data }}</title>
+</head>
+<body>
+    {% include 'bingo_content.html' %}
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
